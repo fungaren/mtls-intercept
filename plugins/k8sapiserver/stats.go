@@ -123,7 +123,7 @@ func (k *k8sAPIServerStats) OnRequest(req *http.Request, clientCert *x509.Certif
 	}
 	object := req.URL.Path
 	ua := strings.Split(req.Header.Get("User-Agent"), "/")[0]
-	source := req.RemoteAddr
+	source := strings.Split(req.RemoteAddr, ":")[0]
 	username := extractUsername(req, clientCert)
 
 	if req.ContentLength > 0 {
@@ -135,16 +135,13 @@ func (k *k8sAPIServerStats) OnRequest(req *http.Request, clientCert *x509.Certif
 }
 
 func (k *k8sAPIServerStats) OnResponse(resp *http.Response, clientCert *x509.Certificate) {
-	logger.L.Info("OnResponse Enter", zap.String("url", resp.Request.RequestURI))
-	defer logger.L.Info("OnResponse Exit", zap.String("url", resp.Request.RequestURI))
-
 	verb := resp.Request.Method
 	if strings.Index(resp.Request.RequestURI, "watch=true") > 0 {
 		verb = "WATCH"
 	}
 	object := resp.Request.URL.Path
 	ua := strings.Split(resp.Request.Header.Get("User-Agent"), "/")[0]
-	source := resp.Request.RemoteAddr
+	source := strings.Split(resp.Request.RemoteAddr, ":")[0]
 	username := extractUsername(resp.Request, clientCert)
 
 	if resp.ContentLength > 0 {

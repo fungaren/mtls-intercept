@@ -25,7 +25,7 @@ You can clone the repository to local then compile from the source, or simply ru
 go install github.com/fungaren/mtls-intercept@latest
 ```
 
-We also provide a pre-built container image `ghcr.io/fungaren/mtls-intercept:0.0.1`
+We also provide a pre-built container image `ghcr.io/fungaren/mtls-intercept:latest`
 
 ```
 Usage:
@@ -162,7 +162,7 @@ You can pass `--plugins` to the command line to enable plugins.
 |----------------|-------------------------|
 | k8sapiserver   | Count inbound/outbound bytes and requests to/from kube-apiserver, and expose Prometheus style metrics. |
 
-Contributions are welcomed.
+Contributions are welcome.
 
 ## License
 
