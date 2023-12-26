@@ -55,11 +55,20 @@ func Setup() {
 }
 
 func OnRequest(req *http.Request, clientCert *x509.Certificate) {
+	wg := sync.WaitGroup{}
 	for _, name := range enabledPlugins {
 		if p, exists := registeredPlugins[name]; exists {
-			go p.OnRequest(req, clientCert)
+			wg.Add(1)
+			go func() {
+				go p.OnRequest(req, clientCert)
+				wg.Done()
+			}()
 		}
 	}
+	go func() {
+		wg.Wait()
+		_ = req.Body.Close()
+	}()
 }
 
 func OnResponse(resp *http.Response, clientCert *x509.Certificate) {
