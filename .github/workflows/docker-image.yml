@@ -27,6 +27,6 @@ jobs:
       - name: Build and push the Docker image
         run: | 
           docker buildx create --name ci-builder --driver=docker-container --use && \
-          docker buildx build --load --platform=linux/amd64,linux/arm64 --tag $IMG \
-            -f Dockerfile --push --build-arg LDFLAGS="-s -w -X \"main.builtTime=$(date -Iseconds)\" -X \"main.commitRef=${GITHUB_SHA}\"" . && \
+          docker buildx build --platform=linux/amd64,linux/arm64 --tag $IMG -f Dockerfile --push \
+            --build-arg LDFLAGS="-s -w -X \"main.builtTime=$(date -Iseconds)\" -X \"main.commitRef=${GITHUB_SHA}\"" . && \
           docker buildx rm ci-builder
