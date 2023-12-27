@@ -1,0 +1,32 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  IMG: ghcr.io/fungaren/mtls-intercept:latest
+
+jobs:
+  build-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push the Docker image
+        run: | 
+          docker buildx create --name ci-builder --driver=docker-container --use && \
+          docker buildx build --load --platform=linux/amd64,linux/arm64 --tag $IMG \
+            -f Dockerfile --push --build-arg LDFLAGS="-s -w -X \"main.builtTime=$(date -Iseconds)\" -X \"main.commitRef=${GITHUB_SHA}\"" . && \
+          docker buildx rm ci-builder
