@@ -32,4 +32,4 @@ WORKDIR /
 
 COPY --from=builder /workspace/mtls-intercept .
 
-ENTRYPOINT ["/bin/bash"]
+CMD ["/bin/sh"]
